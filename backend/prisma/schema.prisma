@@ -33,6 +33,7 @@ model Users {
     commentReactions Comment_Reactions[]     // cảm xúc của người dùng trên bình luận
     shares           Shares[]               // bài viết mà người dùng đã chia sẻ
     chatParticipants Chat_Participants[]     // người dùng tham gia các phòng chat
+    refreshTokens    Refresh_Tokens[]         // token làm mới của người dùng
 
     sentRequests     Friend_Requests[] @relation("SentRequests")        // yêu cầu kết bạn đã gửi
     receivedRequests Friend_Requests[] @relation("ReceivedRequests")    // yêu cầu kết bạn đã nhận
@@ -335,4 +336,17 @@ enum Notification_Type {
   MESSAGE
   PAGE_POST
   SYSTEM
+}
+
+// Bảng 21
+model Refresh_Tokens {
+  id         Int      @id @default(autoincrement())
+  token      String   @unique
+  userId     Int
+  userAgent  String?  // Trình duyệt hoặc thiết bị
+  ipAddress  String?  // Địa chỉ IP
+  expiresAt  DateTime?
+  createdAt  DateTime @default(now())
+
+  user       Users    @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
