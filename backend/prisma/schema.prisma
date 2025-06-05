@@ -1,0 +1,338 @@
+generator client {
+    provider = "prisma-client-js"
+    output   = "../generated/prisma"
+}  
+
+datasource db {
+    provider = "mysql"
+    url      = env("DATABASE_URL")
+}
+
+// Bảng 1
+model Users {
+    id        Int          @id @default(autoincrement())
+    email     String       @unique
+    password  String
+    name      String
+    birthDate DateTime?    // ngày sinh
+    gender    String?      // giới tính
+    phone     String?      // số điện thoai
+    avatarUrl String?      // ảnh đại diện
+    coverUrl  String?      // ảnh bìa
+    nickname  String?      // tên gọi khác
+    bio       String?
+    createdAt DateTime     @default(now())
+    updatedAt DateTime     @updatedAt
+  
+    addresses        Addresses[]             // địa chỉ của người dùng
+    educations       Educations[]           // thông tin học vấn
+    roles            User_Roles[]            // mối quan hệ với Roles
+    posts            Posts[]                // bài viết của người dùng
+    reactions        Reactions[]            // bài viết mà người dùng thích
+    comments         Comments[]             // bình luận của người dùng
+    commentReactions Comment_Reactions[]     // cảm xúc của người dùng trên bình luận
+    shares           Shares[]               // bài viết mà người dùng đã chia sẻ
+    chatParticipants Chat_Participants[]     // người dùng tham gia các phòng chat
+
+    sentRequests     Friend_Requests[] @relation("SentRequests")        // yêu cầu kết bạn đã gửi
+    receivedRequests Friend_Requests[] @relation("ReceivedRequests")    // yêu cầu kết bạn đã nhận
+    friendships1     Friendships[]   @relation("User1")                // mối quan hệ kết bạn với người dùng khác (User1)
+    friendships2     Friendships[]   @relation("User2")                // mối quan hệ kết bạn với người dùng khác (User2)
+    blockedUsers     Blocks[]                                          // người dùng bị chặn bởi người dùng này
+    blockedBy        Blocks[]        @relation("BlockedBy")            // người dùng đã chặn người dùng này
+    messagesSent     Messages[]      @relation("MessagesSent")         // tin nhắn đã gửi
+    notifications    Notifications[]                                   // thông báo của người dùng
+}
+
+// Bảng 2
+model Addresses {
+    id        Int      @id @default(autoincrement())
+    userId    Int
+    street    String?  // đường phố
+    city      String?  // thành phố
+    state     String?  // bang/tỉnh
+    country   String?  // quốc gia
+    zipCode   String?  // mã bưu điện
+    isCurrent Boolean @default(false) // địa chỉ hiện tại hay không
+    createdAt DateTime @default(now())
+  
+    user      Users    @relation(fields: [userId], references: [id], onDelete: Cascade) // liên kết với bảng Users
+}
+
+// Bảng 3
+model Educations {
+    id         Int      @id @default(autoincrement())
+    userId     Int
+    school     String
+    degree     String? // bằng cấp
+    field      String? // lĩnh vực học
+    startDate  DateTime
+    endDate    DateTime?
+    isCurrent  Boolean @default(false) // hiện tại hay không
+  
+    user       Users    @relation(fields: [userId], references: [id], onDelete: Cascade) // liên kết với bảng Users
+}
+
+// Bảng 4
+model Roles {
+    id          Int               @id @default(autoincrement())
+    name        String            @unique
+    createdAt   DateTime          @default(now())
+    users       User_Roles[]
+    permissions Role_Permissions[]
+}
+
+// Bảng 5
+model Permissions {
+    id          Int               @id @default(autoincrement())
+    name        String            @unique
+    url         String?           // URL liên kết đến quyền này
+    method      Http_Method?       // Phương thức HTTP (GET, POST, PUT, DELETE, v.v.)
+    action      String?           // Hành động mô tả quyền này
+    createdAt   DateTime          @default(now())
+  
+    roles       Role_Permissions[]
+}
+
+// Enum cho các phương thức HTTP
+enum Http_Method {
+  GET
+  POST
+  PUT
+  DELETE
+  PATCH
+}
+
+// Bảng 6
+model User_Roles {
+    userId Int
+    roleId Int
+  
+    user   Users @relation(fields: [userId], references: [id], onDelete: Cascade)
+    role   Roles @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  
+    @@id([userId, roleId])
+}
+
+// Bảng 7
+model Role_Permissions {
+    roleId       Int
+    permissionId Int
+  
+    role         Roles       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+    permission   Permissions @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+  
+    @@id([roleId, permissionId])
+}
+
+// Bảng 8
+model Posts {
+    id          Int       @id @default(autoincrement())
+    content     String?
+    authorId    Int
+    visibility  Post_Visibility  @default(PUBLIC) // quyền riêng tư của bài viết
+    createdAt   DateTime  @default(now())
+    updatedAt   DateTime  @updatedAt
+  
+    author    Users      @relation(fields: [authorId], references: [id], onDelete: Cascade) // liên kết với bảng Users
+    media     Post_Media[]
+    reactions Reactions[]
+    comments  Comments[]
+    shares    Shares[]
+}
+
+// Enum cho quyền riêng tư của bài viết
+enum Post_Visibility {
+    ONLY_ME     // chỉ mình tôi
+    FRIENDS     // bạn bè
+    PUBLIC      // công khai
+}
+
+// Bảng 9
+model Post_Media {
+    id        Int       @id @default(autoincrement())
+    postId    Int
+    url       String
+    type      Media_Type // loại phương tiện (ảnh, video, v.v.)
+    caption   String?  // chú thích cho phương tiện
+    createdAt DateTime  @default(now())
+  
+    post      Posts     @relation(fields: [postId], references: [id], onDelete: Cascade) // liên kết với bảng Posts
+}
+
+// Enum cho loại phương tiện
+enum Media_Type {
+    IMAGE
+    VIDEO
+}
+
+// Bảng 10
+model Reactions {
+    id        Int     @id @default(autoincrement())
+    userId    Int
+    postId    Int
+    type      Reaction_Type @default(LIKE) // kiểu cảm xúc
+    createdAt DateTime @default(now())
+
+    user    Users    @relation(fields: [userId], references: [id], onDelete: Cascade) // liên kết với bảng Users
+    post    Posts    @relation(fields: [postId], references: [id], onDelete: Cascade) // liên kết với bảng Posts
+  
+    @@unique([userId, postId])
+}
+
+// Enum cho các loại cảm xúc
+enum Reaction_Type {
+    LIKE     // 👍
+    LOVE     // ❤️
+    HAHA     // 😆
+    WOW      // 😮
+    SAD      // 😢
+    ANGRY    // 😡
+}
+
+// Bảng 11
+model Comments {
+    id        Int       @id @default(autoincrement())
+    content   String
+    authorId  Int
+    postId    Int
+    parentId  Int? // ID của bình luận cha, nếu có
+    isEdited  Boolean   @default(false)
+    createdAt DateTime  @default(now())
+  
+    author     Users      @relation(fields: [authorId], references: [id], onDelete: Cascade) // liên kết với bảng Users
+    post       Posts      @relation(fields: [postId], references: [id], onDelete: Cascade) // liên kết với bảng Posts
+    parent     Comments?  @relation("CommentReplies", fields: [parentId], references: [id], onDelete: Cascade) // bình luận cha nếu có
+    replies    Comments[] @relation("CommentReplies") // các reply của comment này
+    reactions  Comment_Reactions[]              // cảm xúc của comment
+}
+
+// Bảng 12
+model Comment_Reactions {
+    id         Int            @id @default(autoincrement())
+    userId     Int
+    commentId  Int
+    type       Reaction_Type   @default(LIKE)
+    createdAt  DateTime       @default(now())
+  
+    user       Users     @relation(fields: [userId], references: [id], onDelete: Cascade) // liên kết với bảng Users
+    comment    Comments  @relation(fields: [commentId], references: [id], onDelete: Cascade) // liên kết với bảng Comments
+  
+    @@unique([userId, commentId]) // mỗi user chỉ có 1 cảm xúc trên mỗi comment
+}
+
+// Bảng 13
+model Shares {
+    id        Int      @id @default(autoincrement())
+    userId    Int
+    postId    Int
+    sharedAt  DateTime @default(now())
+  
+    user      Users     @relation(fields: [userId], references: [id], onDelete: Cascade) // liên kết với bảng Users
+    post      Posts     @relation(fields: [postId], references: [id])
+}
+
+// Bảng 14
+model Friend_Requests {
+    id         Int      @id @default(autoincrement())
+    senderId   Int
+    receiverId Int
+    status     Friend_Request_Status @default(PENDING)
+    createdAt  DateTime @default(now())
+  
+    sender     Users @relation("SentRequests", fields: [senderId], references: [id], onDelete: Cascade)
+    receiver   Users @relation("ReceivedRequests", fields: [receiverId], references: [id], onDelete: Cascade)
+}
+
+// Enum cho trạng thái yêu cầu kết bạn
+enum Friend_Request_Status {
+    PENDING
+    ACCEPTED
+    REJECTED
+}
+
+// Bảng 15
+model Friendships {
+    id       Int   @id @default(autoincrement())
+    user1Id  Int
+    user2Id  Int
+    createdAt DateTime @default(now())
+  
+    user1   Users  @relation("User1", fields: [user1Id], references: [id], onDelete: Cascade)
+    user2   Users  @relation("User2", fields: [user2Id], references: [id], onDelete: Cascade)
+  
+    @@unique([user1Id, user2Id])
+} // sau khi 2 người dùng chấp nhận yêu cầu kết bạn, sẽ tạo ra một bản ghi trong bảng này
+
+// Bảng 16
+model Blocks {
+    id        Int   @id @default(autoincrement())
+    blockerId Int
+    blockedId Int
+  
+    blocker   Users @relation(fields: [blockerId], references: [id], onDelete: Cascade)
+    blocked   Users @relation("BlockedBy", fields: [blockedId], references: [id], onDelete: Cascade)
+  
+    @@unique([blockerId, blockedId])
+}
+
+// Bảng 17
+model Chat_Rooms {
+    id          Int        @id @default(autoincrement())
+    name        String?    // Tên nhóm chat (có thể null nếu là chat 1-1)
+    isGroup     Boolean    @default(false)
+    createdAt   DateTime   @default(now())
+  
+    participants Chat_Participants[]
+    messages     Messages[]
+}
+
+// Bảng 18
+model Chat_Participants {
+    id         Int      @id @default(autoincrement())
+    chatRoomId Int
+    userId     Int
+    joinedAt   DateTime @default(now())
+  
+    chatRoom  Chat_Rooms @relation(fields: [chatRoomId], references: [id], onDelete: Cascade) // liên kết với bảng ChatRooms
+    user      Users     @relation(fields: [userId], references: [id]) // liên kết với bảng Users
+  
+    @@unique([chatRoomId, userId]) // 1 người chỉ tham gia 1 lần trong nhóm
+}
+
+// Bảng 19
+model Messages {
+    id         Int      @id @default(autoincrement())
+    senderId   Int
+    chatRoomId Int
+    content    String
+    isRead     Boolean  @default(false)
+    isEdited   Boolean  @default(false)
+    sentAt     DateTime @default(now())
+  
+    sender     Users @relation("MessagesSent", fields: [senderId], references: [id], onDelete: Cascade) // liên kết với bảng Users
+    chatRoom   Chat_Rooms @relation(fields: [chatRoomId], references: [id], onDelete: Cascade) // liên kết với bảng ChatRooms
+}
+
+// Bảng 20
+model Notifications {
+  id         Int      @id @default(autoincrement())
+  userId     Int
+  content    String
+  isRead     Boolean  @default(false)
+  type       Notification_Type
+  referenceId Int?      // ID của bài post/comment/... liên quan
+  createdAt  DateTime @default(now())
+
+  user       Users     @relation(fields: [userId], references: [id], onDelete: Cascade) // liên kết với bảng Users
+}
+
+// Enum cho các loại thông báo
+enum Notification_Type {
+  LIKE
+  COMMENT
+  FRIEND_REQUEST
+  MESSAGE
+  PAGE_POST
+  SYSTEM
+}
