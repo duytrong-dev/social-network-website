@@ -21,11 +21,3 @@ npm run lint
 # and
 npm run lint:fix
 ```
-
-Check and config the Prettier:
-
-```bash
-npm run prettier
-# and
-npm run prettier:fix
-```
