@@ -4,4 +4,4 @@ dist/
 .env
 *.env
 /generated/prisma
-prisma/migrations/
+# prisma/migrations/
