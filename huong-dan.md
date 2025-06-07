@@ -4,6 +4,10 @@
 
 > **Link tham khảo sử dụng prisma:** [ChatGPT Share](https://chatgpt.com/share/6841447e-0b68-8008-b0ff-336a6cb2a08e)
 
+> **Link tham khảo kiến thức về zod:** [ChatGPT Share](https://chatgpt.com/share/68429606-8fc4-8008-91ce-8b994d3ce737)
+
+**Link tham khảo kiến thức về phân quyền ( role - permission ):** [ChatGPT Share](https://chatgpt.com/share/6842966b-7360-8008-9a10-9c36d16f0e6e)
+
 ---
 
 ## 1. 👤 Chức Năng Người Dùng (User Functions)

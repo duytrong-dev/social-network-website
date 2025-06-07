@@ -1,18 +1,22 @@
-/*
-  Warnings:
+-- CreateTable
+CREATE TABLE `Users` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `email` VARCHAR(191) NOT NULL,
+    `password` VARCHAR(191) NOT NULL,
+    `name` VARCHAR(191) NOT NULL,
+    `birthDate` DATETIME(3) NULL,
+    `gender` VARCHAR(191) NULL,
+    `phone` VARCHAR(191) NULL,
+    `avatarUrl` VARCHAR(191) NULL,
+    `coverUrl` VARCHAR(191) NULL,
+    `nickname` VARCHAR(191) NULL,
+    `bio` VARCHAR(191) NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL,
 
-  - Added the required column `updatedAt` to the `Users` table without a default value. This is not possible if the table is not empty.
-
-*/
--- AlterTable
-ALTER TABLE `users` ADD COLUMN `avatarUrl` VARCHAR(191) NULL,
-    ADD COLUMN `bio` VARCHAR(191) NULL,
-    ADD COLUMN `birthDate` DATETIME(3) NULL,
-    ADD COLUMN `coverUrl` VARCHAR(191) NULL,
-    ADD COLUMN `gender` VARCHAR(191) NULL,
-    ADD COLUMN `nickname` VARCHAR(191) NULL,
-    ADD COLUMN `phone` VARCHAR(191) NULL,
-    ADD COLUMN `updatedAt` DATETIME(3) NOT NULL;
+    UNIQUE INDEX `Users_email_key`(`email`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
 CREATE TABLE `Addresses` (
@@ -67,7 +71,7 @@ CREATE TABLE `Permissions` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
-CREATE TABLE `UserRoles` (
+CREATE TABLE `User_Roles` (
     `userId` INTEGER NOT NULL,
     `roleId` INTEGER NOT NULL,
 
@@ -75,7 +79,7 @@ CREATE TABLE `UserRoles` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
-CREATE TABLE `RolePermissions` (
+CREATE TABLE `Role_Permissions` (
     `roleId` INTEGER NOT NULL,
     `permissionId` INTEGER NOT NULL,
 
@@ -95,7 +99,7 @@ CREATE TABLE `Posts` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
-CREATE TABLE `PostMedia` (
+CREATE TABLE `Post_Media` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `postId` INTEGER NOT NULL,
     `url` VARCHAR(191) NOT NULL,
@@ -132,14 +136,14 @@ CREATE TABLE `Comments` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
-CREATE TABLE `CommentReactions` (
+CREATE TABLE `Comment_Reactions` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `userId` INTEGER NOT NULL,
     `commentId` INTEGER NOT NULL,
     `type` ENUM('LIKE', 'LOVE', 'HAHA', 'WOW', 'SAD', 'ANGRY') NOT NULL DEFAULT 'LIKE',
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
 
-    UNIQUE INDEX `CommentReactions_userId_commentId_key`(`userId`, `commentId`),
+    UNIQUE INDEX `Comment_Reactions_userId_commentId_key`(`userId`, `commentId`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -154,7 +158,7 @@ CREATE TABLE `Shares` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
-CREATE TABLE `FriendRequests` (
+CREATE TABLE `Friend_Requests` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `senderId` INTEGER NOT NULL,
     `receiverId` INTEGER NOT NULL,
@@ -186,7 +190,7 @@ CREATE TABLE `Blocks` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
-CREATE TABLE `ChatRooms` (
+CREATE TABLE `Chat_Rooms` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `name` VARCHAR(191) NULL,
     `isGroup` BOOLEAN NOT NULL DEFAULT false,
@@ -196,13 +200,13 @@ CREATE TABLE `ChatRooms` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
-CREATE TABLE `ChatParticipants` (
+CREATE TABLE `Chat_Participants` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `chatRoomId` INTEGER NOT NULL,
     `userId` INTEGER NOT NULL,
     `joinedAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
 
-    UNIQUE INDEX `ChatParticipants_chatRoomId_userId_key`(`chatRoomId`, `userId`),
+    UNIQUE INDEX `Chat_Participants_chatRoomId_userId_key`(`chatRoomId`, `userId`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -232,6 +236,20 @@ CREATE TABLE `Notifications` (
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
+-- CreateTable
+CREATE TABLE `Refresh_Tokens` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `token` VARCHAR(191) NOT NULL,
+    `userId` INTEGER NOT NULL,
+    `userAgent` VARCHAR(191) NULL,
+    `ipAddress` VARCHAR(191) NULL,
+    `expiresAt` DATETIME(3) NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+
+    UNIQUE INDEX `Refresh_Tokens_token_key`(`token`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
 -- AddForeignKey
 ALTER TABLE `Addresses` ADD CONSTRAINT `Addresses_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `Users`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
@@ -239,22 +257,22 @@ ALTER TABLE `Addresses` ADD CONSTRAINT `Addresses_userId_fkey` FOREIGN KEY (`use
 ALTER TABLE `Educations` ADD CONSTRAINT `Educations_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `Users`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `UserRoles` ADD CONSTRAINT `UserRoles_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `Users`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `User_Roles` ADD CONSTRAINT `User_Roles_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `Users`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `UserRoles` ADD CONSTRAINT `UserRoles_roleId_fkey` FOREIGN KEY (`roleId`) REFERENCES `Roles`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `User_Roles` ADD CONSTRAINT `User_Roles_roleId_fkey` FOREIGN KEY (`roleId`) REFERENCES `Roles`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `RolePermissions` ADD CONSTRAINT `RolePermissions_roleId_fkey` FOREIGN KEY (`roleId`) REFERENCES `Roles`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `Role_Permissions` ADD CONSTRAINT `Role_Permissions_roleId_fkey` FOREIGN KEY (`roleId`) REFERENCES `Roles`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `RolePermissions` ADD CONSTRAINT `RolePermissions_permissionId_fkey` FOREIGN KEY (`permissionId`) REFERENCES `Permissions`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `Role_Permissions` ADD CONSTRAINT `Role_Permissions_permissionId_fkey` FOREIGN KEY (`permissionId`) REFERENCES `Permissions`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `Posts` ADD CONSTRAINT `Posts_authorId_fkey` FOREIGN KEY (`authorId`) REFERENCES `Users`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `PostMedia` ADD CONSTRAINT `PostMedia_postId_fkey` FOREIGN KEY (`postId`) REFERENCES `Posts`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `Post_Media` ADD CONSTRAINT `Post_Media_postId_fkey` FOREIGN KEY (`postId`) REFERENCES `Posts`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `Reactions` ADD CONSTRAINT `Reactions_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `Users`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
@@ -272,10 +290,10 @@ ALTER TABLE `Comments` ADD CONSTRAINT `Comments_postId_fkey` FOREIGN KEY (`postI
 ALTER TABLE `Comments` ADD CONSTRAINT `Comments_parentId_fkey` FOREIGN KEY (`parentId`) REFERENCES `Comments`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `CommentReactions` ADD CONSTRAINT `CommentReactions_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `Users`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `Comment_Reactions` ADD CONSTRAINT `Comment_Reactions_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `Users`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `CommentReactions` ADD CONSTRAINT `CommentReactions_commentId_fkey` FOREIGN KEY (`commentId`) REFERENCES `Comments`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `Comment_Reactions` ADD CONSTRAINT `Comment_Reactions_commentId_fkey` FOREIGN KEY (`commentId`) REFERENCES `Comments`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `Shares` ADD CONSTRAINT `Shares_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `Users`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
@@ -284,10 +302,10 @@ ALTER TABLE `Shares` ADD CONSTRAINT `Shares_userId_fkey` FOREIGN KEY (`userId`) 
 ALTER TABLE `Shares` ADD CONSTRAINT `Shares_postId_fkey` FOREIGN KEY (`postId`) REFERENCES `Posts`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `FriendRequests` ADD CONSTRAINT `FriendRequests_senderId_fkey` FOREIGN KEY (`senderId`) REFERENCES `Users`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `Friend_Requests` ADD CONSTRAINT `Friend_Requests_senderId_fkey` FOREIGN KEY (`senderId`) REFERENCES `Users`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `FriendRequests` ADD CONSTRAINT `FriendRequests_receiverId_fkey` FOREIGN KEY (`receiverId`) REFERENCES `Users`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `Friend_Requests` ADD CONSTRAINT `Friend_Requests_receiverId_fkey` FOREIGN KEY (`receiverId`) REFERENCES `Users`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `Friendships` ADD CONSTRAINT `Friendships_user1Id_fkey` FOREIGN KEY (`user1Id`) REFERENCES `Users`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
@@ -302,16 +320,19 @@ ALTER TABLE `Blocks` ADD CONSTRAINT `Blocks_blockerId_fkey` FOREIGN KEY (`blocke
 ALTER TABLE `Blocks` ADD CONSTRAINT `Blocks_blockedId_fkey` FOREIGN KEY (`blockedId`) REFERENCES `Users`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `ChatParticipants` ADD CONSTRAINT `ChatParticipants_chatRoomId_fkey` FOREIGN KEY (`chatRoomId`) REFERENCES `ChatRooms`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `Chat_Participants` ADD CONSTRAINT `Chat_Participants_chatRoomId_fkey` FOREIGN KEY (`chatRoomId`) REFERENCES `Chat_Rooms`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `ChatParticipants` ADD CONSTRAINT `ChatParticipants_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `Users`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `Chat_Participants` ADD CONSTRAINT `Chat_Participants_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `Users`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `Messages` ADD CONSTRAINT `Messages_senderId_fkey` FOREIGN KEY (`senderId`) REFERENCES `Users`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `Messages` ADD CONSTRAINT `Messages_chatRoomId_fkey` FOREIGN KEY (`chatRoomId`) REFERENCES `ChatRooms`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `Messages` ADD CONSTRAINT `Messages_chatRoomId_fkey` FOREIGN KEY (`chatRoomId`) REFERENCES `Chat_Rooms`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `Notifications` ADD CONSTRAINT `Notifications_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `Users`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `Refresh_Tokens` ADD CONSTRAINT `Refresh_Tokens_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `Users`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;

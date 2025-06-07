@@ -1,18 +1,8 @@
-import { Request, Response, Router } from 'express'
-import prisma from '~/database'
+import { Router } from 'express'
+import authRoutes from './auth.routes'
 
-const appRoutes = Router()
+const appRoutes: Router = Router()
 
-appRoutes.get('/', async (req: Request, res: Response) => {
-    const users = await prisma.users.findMany()
-    res.status(200).json({
-        data: {
-            message: 'Welcome to the API',
-            version: '1.0.0',
-            status: 'success',
-            users: users
-        }
-    })
-})
+appRoutes.use('/auth', authRoutes)
 
 export default appRoutes
