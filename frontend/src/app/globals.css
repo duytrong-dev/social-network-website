@@ -3,6 +3,12 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --glass-bg: rgba(255, 255, 255, 0.1);
+  --glass-border: rgba(255, 255, 255, 0.2);
+  --dark-glass-bg: rgba(15, 23, 42, 0.6);
+  --dark-glass-border: rgba(255, 255, 255, 0.1);
+  --primary-gradient: linear-gradient(135deg, #6366f1, #8b5cf6, #ec4899);
+  --accent-gradient: linear-gradient(90deg, #00c9ff, #92fe9d);
 }
 
 @theme inline {
@@ -12,15 +18,195 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  scroll-behavior: smooth;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    color: #e2e8f0;
+    transition: all 0.3s ease;
+    overflow-x: hidden;
+    min-height: 100vh;
+}
+
+.dark body {
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+}
+
+.light body {
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+}
+
+.glass {
+  background: var(--glass-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
+}
+
+.dark .glass {
+  background: var(--dark-glass-bg);
+  border: 1px solid var(--dark-glass-border);
+}
+
+.card-glass {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.story-ring {
+  position: relative;
+  background: var(--primary-gradient);
+  padding: 3px;
+  border-radius: 50%;
+  display: inline-flex;
+}
+
+.story-ring:hover {
+  animation: glow 1.5s ease-in-out infinite alternate;
+}
+
+.create-btn {
+  background: var(--primary-gradient);
+  box-shadow: 0 0 20px rgba(99, 102, 241, 0.5);
+  transition: all 0.3s ease;
+}
+
+.create-btn:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 30px rgba(99, 102, 241, 0.7);
+}
+
+.floating-btn {
+  animation: float 6s ease-in-out infinite;
+  box-shadow: 0 0 20px rgba(99, 102, 241, 0.5);
+}
+
+.post-card {
+  transition: all 0.3s ease;
+}
+
+.post-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+}
+
+.dark .post-card:hover {
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+}
+
+.avatar {
+  border: 2px solid transparent;
+  background: linear-gradient(white, white) padding-box,
+    var(--primary-gradient) border-box;
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+.reaction-btn:hover {
+  transform: scale(1.1);
+}
+
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-15px); }
+  100% { transform: translateY(0px); }
+}
+
+@keyframes glow {
+  from { box-shadow: 0 0 5px rgba(99, 102, 241, 0.3), 0 0 10px rgba(99, 102, 241, 0.2); }
+  to { box-shadow: 0 0 15px rgba(99, 102, 241, 0.6), 0 0 20px rgba(99, 102, 241, 0.4); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.fade-in {
+  animation: fadeIn 0.6s ease-in-out forwards;
+}
+
+.delay-1 { animation-delay: 0.1s; }
+.delay-2 { animation-delay: 0.2s; }
+.delay-3 { animation-delay: 0.3s; }
+
+.appear-on-scroll {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.upload-btn:hover .upload-icon {
+  transform: rotate(15deg);
+}
+
+.upload-icon {
+  transition: transform 0.3s ease;
+}
+
+.focus-mode {
+  transition: all 0.5s ease;
+}
+
+.gradient-text {
+  background: var(--primary-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.hidden {
+  display: none;
+}
+
+/* Sửa lại style cho scroll sidebar */
+.sidebar-scroll {
+  max-height: calc(100vh - 6rem); /* Trừ đi chiều cao của header */
+  overflow-y: auto;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch; /* Cho scroll mượt trên iOS */
+}
+
+/* Tùy chỉnh scrollbar cho sidebar */
+.sidebar-scroll::-webkit-scrollbar {
+  width: 0;
+}
+
+.sidebar-scroll::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+}
+
+.sidebar-scroll::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+}
+
+.sidebar-scroll::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* Đảm bảo sticky container có chiều cao phù hợp */
+.sticky-container {
+  height: fit-content;
+  max-height: calc(100vh - 8rem);
+  display: flex;
+  flex-direction: column;
+}
+
+/* Đảm bảo nội dung trong sidebar scroll được */
+.sidebar-scroll-content {
+  flex: 1;
 }

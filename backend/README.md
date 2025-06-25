@@ -21,3 +21,10 @@ npm run lint
 # and
 npm run lint:fix
 ```
+
+Tạo migrate db
+
+```bash
+npx prisma migrate dev --name new_change
+npx prisma generate
+```

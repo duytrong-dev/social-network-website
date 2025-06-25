@@ -15,7 +15,7 @@ model Users {
     password  String
     name      String
     birthDate DateTime     // ngày sinh
-    gender    String?      // giới tính
+    gender    Gender?      // giới tính
     phone     String?      // số điện thoai
     avatarUrl String?      // ảnh đại diện
     coverUrl  String?      // ảnh bìa
@@ -43,6 +43,12 @@ model Users {
     blockedBy        Blocks[]        @relation("BlockedBy")            // người dùng đã chặn người dùng này
     messagesSent     Messages[]      @relation("MessagesSent")         // tin nhắn đã gửi
     notifications    Notifications[]                                   // thông báo của người dùng
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
 }
 
 // Bảng 2
@@ -341,7 +347,7 @@ enum Notification_Type {
 // Bảng 21
 model Refresh_Tokens {
   id         Int      @id @default(autoincrement())
-  token      String   @unique
+  token      String   @db.VarChar(512) @unique 
   userId     Int
   userAgent  String?  // Trình duyệt hoặc thiết bị
   ipAddress  String?  // Địa chỉ IP

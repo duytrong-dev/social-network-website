@@ -3,5 +3,6 @@ dist/
 
 .env
 *.env
-/generated/prisma
-# prisma/migrations/
+
+generated/prisma
+prisma/migrations/

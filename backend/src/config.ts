@@ -8,7 +8,7 @@ config({ path: '.env' })
 
 // Kiểm tra sự tồn tại của file .env
 if (!fs.existsSync(path.resolve('.env'))) { // trả về đường dẫn tuyệt đối đến file .env
-  console.log(chalk.red('❌ Không tìm thấy file môi trường .env'))
+  console.log(chalk.red('Không tìm thấy file môi trường .env'))
   process.exit(1)
 }
 
@@ -34,7 +34,7 @@ const envSchema = z.object({
 const parsedEnv = envSchema.safeParse(process.env)
 
 if (!parsedEnv.success) {
-  console.error(chalk.red('❌ Biến môi trường không hợp lệ!'))
+  console.error(chalk.red('Biến môi trường không hợp lệ!'))
   console.error(parsedEnv.error.format())
   process.exit(1) 
 }
