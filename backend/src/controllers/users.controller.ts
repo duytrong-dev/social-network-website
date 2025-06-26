@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import { getUserById } from "~/services/users.services";
 import { CustomError } from "~/utils/error";
 
-export const getMe = async (req: Request, res: Response, next: NextFunction) => {
+export const GetMeController = async (req: Request, res: Response, next: NextFunction) => {
   const payload = req.body.payload
   const user = await getUserById(payload.userId)
   if(!user) {
