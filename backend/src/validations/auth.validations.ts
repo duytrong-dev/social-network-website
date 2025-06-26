@@ -33,7 +33,14 @@ export type LoginBodyType = z.infer<typeof LoginBody>
 
 // đăng xuất
 export const LogoutBody = z.object({
-    refreshToken: z.string({message: "Refresh token là bắt buộc!"})
+    refreshToken: z.string().nullable()
 }).strict()
 
 export type LogoutBodyType = z.TypeOf<typeof LogoutBody>
+
+// email verify 
+export const EmailVerifyBody = z.object({
+    emailVerifyToken: z.string().nullable()
+}).strict()
+
+export type EmailVerifyBodyType = z.TypeOf<typeof EmailVerifyBody>

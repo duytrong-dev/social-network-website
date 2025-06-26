@@ -1,19 +1,24 @@
-import { GenderType } from "~/constants/type.constants";
 import prisma from "~/database"
+import { NewUserType, UpdateUserType } from "~/types/user.type";
 import { hashPassword } from "~/utils/crypto";
 
-export const createNewUser = async (payload: {email: string, password: string, name: string, birthDate: Date, gender: GenderType}) => {
-  const hash = await hashPassword(payload.password)
+export const createNewUser = async (user: NewUserType) => {
+  const hash = await hashPassword(user.password)
+  const data = {...user, password: hash}
   const newUser = await prisma.users.create({
-    data: {
-      email: payload.email,
-      password: hash, 
-      name: payload.name,
-      birthDate: payload.birthDate,
-      gender: payload.gender
-    }
+    data: data
   })
   return newUser
+}
+
+export const updateUser = async (user: UpdateUserType) => {
+  const userUpdate = prisma.users.update({
+    data: user,
+    where: {
+      id: user.id
+    }
+  })
+  return userUpdate
 }
 
 export const getUserByEmail = async (email: string) => {
@@ -22,3 +27,11 @@ export const getUserByEmail = async (email: string) => {
   })
   return user
 }
+
+export const getUserById = async (id: number) => {
+  const user = await prisma.users.findUnique({
+    where: { id }
+  })
+  return user
+}
+

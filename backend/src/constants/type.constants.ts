@@ -60,3 +60,11 @@ export const NotificationTypeValue = {
 } as const
 
 export type NotificationTypeType = (typeof NotificationTypeValue)[keyof typeof NotificationTypeValue]
+
+export const TokenTypeValue = {
+  ACCESS_TOKEN: "ACCESS_TOKEN",
+  REFRESH_TOKEN: "REFRESH_TOKEN",
+  EMAIL_VERIFY_TOKEN: "EMAIL_VERIFY_TOKEN"
+} as const
+
+export type TokenType = (typeof TokenTypeValue)[keyof typeof TokenTypeValue]

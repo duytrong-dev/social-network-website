@@ -21,6 +21,8 @@ model Users {
     coverUrl  String?      // ảnh bìa
     nickname  String?      // tên gọi khác
     bio       String?
+    emailVerifyToken String? @db.VarChar(512)
+    isVerify  Boolean?     // verify email
     createdAt DateTime     @default(now())
     updatedAt DateTime     @updatedAt
   
