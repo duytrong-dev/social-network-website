@@ -23,14 +23,22 @@ export const updateUser = async (user: UpdateUserType) => {
 
 export const getUserByEmail = async (email: string) => {
   const user = await prisma.users.findUnique({
-    where: { email }
+    where: { email },
+    include: {
+      addresses: true,
+      educations: true
+    }
   })
   return user
 }
 
 export const getUserById = async (id: number) => {
   const user = await prisma.users.findUnique({
-    where: { id }
+    where: { id },
+    include: {
+      addresses: true,
+      educations: true
+    }
   })
   return user
 }

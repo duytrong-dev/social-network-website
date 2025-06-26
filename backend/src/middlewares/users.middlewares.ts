@@ -3,7 +3,7 @@ import { getUserById } from "~/services/users.services";
 import { CustomError } from "~/utils/error";
 
 export const verifiedUserMiddleware = async (req: Request, res: Response, next: NextFunction) => {
-  const {payload} = req.body
+  const { payload } = req.body
   const user = await getUserById(payload.userId)
   if(!user){
     return next(new CustomError("Không tìm thấy người dùng!" , 404))

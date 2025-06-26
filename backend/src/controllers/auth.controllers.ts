@@ -55,7 +55,7 @@ export const LoginController = async (req: Request, res: Response, next: NextFun
 }
 
 export const LogoutController = async (req: Request, res: Response, next: NextFunction) => {
-  const refreshToken = req.body.refreshToken
+  const { refreshToken } = req.body
   await deleteRefreshToken(refreshToken)
   return res.status(200).json({ 
     status: "success",
@@ -87,7 +87,7 @@ export const EmailVerifyController = async (req: Request, res: Response, next: N
 }
 
 export const ResendVerifyEmailController = async (req: Request, res: Response, next: NextFunction) => {
-  const {payload} = req.body
+  const { payload } = req.body
   const user = await getUserById(payload.userId)
   if(!user){
     return next(new CustomError("Không tìm thấy người dùng!" , 404))
@@ -108,7 +108,7 @@ export const ResendVerifyEmailController = async (req: Request, res: Response, n
 }
 
 export const ForgotPassWordController = async (req: Request, res: Response, next: NextFunction) => {
-  const {email} = req.body
+  const { email } = req.body
   const user = await getUserByEmail(email)
   if(!user) {
     return next(new CustomError("Không tìm thấy người dùng!" , 404))
@@ -123,7 +123,7 @@ export const ForgotPassWordController = async (req: Request, res: Response, next
 }
 
 export const VerifyForgotPassWordTokenController = async (req: Request, res: Response, next: NextFunction) => {
-  const {forgotPasswordToken, payload} = req.body
+  const { forgotPasswordToken, payload } = req.body
   const user = await getUserById(payload.userId)
   if(!user){
     return next(new CustomError("Không tìm thấy người dùng!" , 404))
@@ -144,7 +144,7 @@ export const VerifyForgotPassWordTokenController = async (req: Request, res: Res
 }
 
 export const ResetPassWordController = async (req: Request, res: Response, next: NextFunction) => {
-  const {forgotPasswordToken, payload, password} = req.body
+  const { forgotPasswordToken, payload, password } = req.body
   const user = await getUserById(payload.userId)
   if(!user){
     return next(new CustomError("Không tìm thấy người dùng!" , 404))

@@ -14,7 +14,7 @@ export const accessTokenMiddleware = async (req: Request, res: Response, next: N
 }
 
 export const refreshTokenMiddleware = async (req: Request, res: Response, next: NextFunction) => {
-  const {refreshToken} = req.body
+  const { refreshToken } = req.body
   if (!refreshToken) {
     return next(new CustomError("Refresh token là bắt buộc!" , 401))
   }
@@ -27,7 +27,7 @@ export const refreshTokenMiddleware = async (req: Request, res: Response, next: 
 }
 
 export const emailVerifyTokenMiddleware = async (req: Request, res: Response, next: NextFunction) => {
-  const {emailVerifyToken} = req.body
+  const { emailVerifyToken } = req.body
   if (!emailVerifyToken) {
     return next(new CustomError("Email verify token là bắt buộc!" , 401))
   }
@@ -37,7 +37,7 @@ export const emailVerifyTokenMiddleware = async (req: Request, res: Response, ne
 }
 
 export const forgotPasswordTokenMiddleware = async (req: Request, res: Response, next: NextFunction) => {
-  const {forgotPasswordToken} = req.body
+  const { forgotPasswordToken } = req.body
   if (!forgotPasswordToken) {
     return next(new CustomError("Forgot pasword token là bắt buộc!" , 401))
   }
