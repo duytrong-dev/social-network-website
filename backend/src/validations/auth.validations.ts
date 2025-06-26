@@ -33,14 +33,43 @@ export type LoginBodyType = z.infer<typeof LoginBody>
 
 // đăng xuất
 export const LogoutBody = z.object({
-    refreshToken: z.string().nullable()
+  refreshToken: z.string().nullable()
 }).strict()
 
 export type LogoutBodyType = z.TypeOf<typeof LogoutBody>
 
 // email verify 
 export const EmailVerifyBody = z.object({
-    emailVerifyToken: z.string().nullable()
+  emailVerifyToken: z.string().nullable()
 }).strict()
 
 export type EmailVerifyBodyType = z.TypeOf<typeof EmailVerifyBody>
+
+// quên mật khẩu 
+export const ForgotPasswordBody = z.object({
+  email: z.string().trim().email({ message: "Email không đúng định dạng!" }),
+}).strict()
+
+export type ForgotPasswordBodyType = z.TypeOf<typeof ForgotPasswordBody>
+
+// xác thực quên mật khẩu token 
+export const VerifyForgotPasswordTokenBody = z.object({
+  forgotPasswordToken: z.string().nullable()
+}).strict()
+
+export type VerifyForgotPasswordBodyType = z.TypeOf<typeof VerifyForgotPasswordTokenBody>
+
+// xác thực quên mật khẩu token 
+export const ResetPasswordBody = z.object({
+  forgotPasswordToken: z.string().nullable(),
+  password: z.string().trim().min(8, { message: "Mật khẩu có 8 kí tự trở lên!" })
+             .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/, { message: "Mật khẩu phải chứa ít nhất một chữ cái viết hoa, một chữ cái viết thường và một số!" }),
+  confirmPassword: z.string().trim().min(8, "Mật khẩu có 8 kí tự trở lên!"),
+})
+.strict()
+.refine((data) => data.password === data.confirmPassword, {
+  path: ["confirmPassword"],
+  message: "Xác nhận mật khẩu không khớp!"
+})
+
+export type ResetPasswordBodyType = z.TypeOf<typeof ResetPasswordBody>

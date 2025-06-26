@@ -23,6 +23,8 @@ const envSchema = z.object({
   REFRESH_TOKEN_EXPIRES_IN: z.string(),
   EMAIL_VERIFY_TOKEN_SECRET: z.string(),
   EMAIL_VERIFY_TOKEN_EXPIRES_IN: z.string(),
+  FORGOT_PASSWORD_TOKEN_SECRET: z.string(),
+  FORGOT_PASSWORD_TOKEN_EXPIRES_IN: z.string(),
   INITIAL_EMAIL_SERVER: z.string().email(),
   INITIAL_PASSWORD_SERVER: z.string(),
   DOMAIN: z.string(),

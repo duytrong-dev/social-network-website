@@ -14,6 +14,7 @@ export type NewUserType = {
   bio?: string;
   emailVerifyToken?: string;
   isVerify?: boolean;
+  forgotPasswordToken?: string;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -32,6 +33,7 @@ export type UpdateUserType = {
   bio?: string;
   emailVerifyToken?: string;
   isVerify?: boolean;
+  forgotPasswordToken?: string;
   createdAt?: Date;
   updatedAt?: Date;
 }

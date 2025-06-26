@@ -70,6 +70,29 @@ export const signEmailVerifyToken = ({payload, secretOrPrivateKey = envConfig.EM
   })
 }
 
+// Tạo forgot password token
+export const signForgotPasswordToken = ({payload, secretOrPrivateKey = envConfig.FORGOT_PASSWORD_TOKEN_SECRET, options = {},}: 
+{
+  payload: string | object | Buffer
+  secretOrPrivateKey?: string
+  options?: jwt.SignOptions
+}): Promise<string> => {
+
+  const finalOptions: jwt.SignOptions = {
+    algorithm: 'HS256',
+    expiresIn: envConfig.FORGOT_PASSWORD_TOKEN_EXPIRES_IN as jwt.SignOptions['expiresIn'], 
+    ...options,
+  }
+
+  return new Promise((resolve, reject) => {
+    jwt.sign(payload, secretOrPrivateKey, finalOptions, (err, token) => {
+      if (err) return reject(err)
+      if (!token) return reject(new Error('Tạo token không thành công!'))
+      resolve(token)
+    })
+  })
+}
+
 // verify tokens
 const verifyToken = (token: string, secretOrPublicKey: string, options: jwt.VerifyOptions): Promise<jwt.JwtPayload | string> => {
   return new Promise((resolve, reject) => {
@@ -104,6 +127,16 @@ export const verifyRefreshToken = ({ token, secretOrPublicKey = envConfig.REFRES
 
 // Xác thực email verify token
 export const verifyEmailVerifyToken = ({ token, secretOrPublicKey = envConfig.EMAIL_VERIFY_TOKEN_SECRET, options = {} }: {
+  token: string
+  secretOrPublicKey?: string,
+  options?: jwt.VerifyOptions
+}): Promise<jwt.JwtPayload | string> => {
+  const finalOptions: jwt.VerifyOptions = { algorithms: ['HS256'], ...options }
+  return verifyToken(token, secretOrPublicKey, finalOptions)
+}
+
+// Xác thực forgot password token
+export const verifyForgotPasswordToken = ({ token, secretOrPublicKey = envConfig.FORGOT_PASSWORD_TOKEN_SECRET, options = {} }: {
   token: string
   secretOrPublicKey?: string,
   options?: jwt.VerifyOptions
